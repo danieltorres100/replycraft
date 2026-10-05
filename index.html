@@ -1,353 +1,3 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReplyCraft AI • Asistente de Conversación</title>
-    <style>
-        :root {
-            --bg-color: #0b0f19;
-            --card-bg: #151c2c;
-            --card-border: #232d42;
-            --text-main: #f3f4f6;
-            --text-sub: #9ca3af;
-            --accent-pink: #ec4899;
-            --accent-purple: #8b5cf6;
-            --accent-blue: #3b82f6;
-            --accent-green: #10b981;
-            --button-gradient: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            padding: 16px;
-            max-width: 500px;
-            margin: 0 auto;
-        }
-
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .brand h1 {
-            font-size: 22px;
-            font-weight: 800;
-            background: linear-gradient(135deg, #f472b6, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .brand p {
-            font-size: 12px;
-            color: var(--text-sub);
-        }
-
-        .btn-config {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 8px 12px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        .config-panel {
-            display: none;
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 16px;
-            margin-bottom: 16px;
-        }
-
-        .config-panel.active {
-            display: block;
-        }
-
-        .config-panel label {
-            font-size: 12px;
-            color: var(--text-sub);
-            display: block;
-            margin-bottom: 6px;
-        }
-
-        .config-panel input {
-            width: 100%;
-            background: #0b0f19;
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            padding: 10px;
-            border-radius: 8px;
-            font-size: 13px;
-            outline: none;
-            margin-bottom: 10px;
-        }
-
-        .btn-save-key {
-            background: var(--accent-purple);
-            color: white;
-            border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .upload-card {
-            background: var(--card-bg);
-            border: 2px dashed var(--card-border);
-            border-radius: 16px;
-            padding: 24px;
-            text-align: center;
-            cursor: pointer;
-            margin-bottom: 16px;
-            position: relative;
-        }
-
-        .upload-card input[type="file"] {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            opacity: 0;
-            cursor: pointer;
-        }
-
-        .upload-icon {
-            font-size: 32px;
-            margin-bottom: 8px;
-        }
-
-        .upload-text {
-            font-size: 14px;
-            font-weight: 600;
-        }
-
-        .upload-subtext {
-            font-size: 12px;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
-
-        .preview-container {
-            display: none;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-
-        .preview-container img {
-            max-width: 100%;
-            max-height: 200px;
-            border-radius: 12px;
-            border: 1px solid var(--card-border);
-        }
-
-        .section-label {
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            color: var(--text-sub);
-            margin-bottom: 10px;
-        }
-
-        .tones-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-
-        .tone-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 12px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .tone-card.active {
-            border-color: var(--accent-pink);
-            background: rgba(236, 72, 153, 0.1);
-        }
-
-        .tone-title {
-            font-size: 13px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .tone-desc {
-            font-size: 11px;
-            color: var(--text-sub);
-            margin-top: 4px;
-        }
-
-        .btn-generate {
-            width: 100%;
-            background: var(--button-gradient);
-            color: white;
-            border: none;
-            padding: 14px;
-            border-radius: 14px;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            box-shadow: 0 10px 20px -5px rgba(236, 72, 153, 0.4);
-            margin-bottom: 24px;
-        }
-
-        .btn-generate:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-
-        .results-container {
-            display: none;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .results-container.active {
-            display: flex;
-        }
-
-        .reply-card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 14px;
-            padding: 16px;
-        }
-
-        .reply-tag {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            border-radius: 6px;
-            display: inline-block;
-            margin-bottom: 8px;
-        }
-
-        .tag-1 { background: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
-        .tag-2 { background: rgba(139, 92, 246, 0.2); color: var(--accent-purple); }
-        .tag-3 { background: rgba(59, 130, 246, 0.2); color: var(--accent-blue); }
-
-        .reply-text {
-            font-size: 14px;
-            line-height: 1.4;
-            margin-bottom: 12px;
-            color: #ffffff;
-        }
-
-        .btn-copy {
-            background: #0b0f19;
-            border: 1px solid var(--card-border);
-            color: var(--text-main);
-            width: 100%;
-            padding: 8px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-
-        .btn-copy:active {
-            background: var(--accent-green);
-            color: white;
-        }
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="brand">
-            <h1>ReplyCraft AI</h1>
-            <p>Captura tu chat y obtén respuestas perfectas</p>
-        </div>
-        <button class="btn-config" onclick="toggleConfig()">⚙️</button>
-    </header>
-
-    <div class="config-panel" id="configPanel">
-        <label>Google AI Studio API Key (Gratuita)</label>
-        <input type="password" id="apiKeyInput" placeholder="Pega tu clave AI Studio aquí...">
-        <button class="btn-save-key" onclick="saveKey()">Guardar Clave</button>
-    </div>
-
-    <div class="upload-card">
-        <input type="file" id="imageInput" accept="image/*" onchange="handleImageSelect(event)">
-        <div class="upload-icon">📱</div>
-        <div class="upload-text">Subir captura del chat</div>
-        <div class="upload-subtext">Sube una imagen de WhatsApp, Instagram, Tinder, etc.</div>
-    </div>
-
-    <div class="preview-container" id="previewContainer">
-        <img id="imagePreview" alt="Vista previa de la captura">
-    </div>
-
-    <div class="section-label">ELIGE TU OBJETIVO</div>
-    <div class="tones-grid">
-        <div class="tone-card active" onclick="selectTone(this, 'Ligar')">
-            <div class="tone-title">💘 Ligar / Coqueteo</div>
-            <div class="tone-desc">Ingenioso, misterioso y divertido</div>
-        </div>
-        <div class="tone-card" onclick="selectTone(this, 'Negocio')">
-            <div class="tone-title">🤝 Negocio / Ventas</div>
-            <div class="tone-desc">Profesional, cierre y valor</div>
-        </div>
-        <div class="tone-card" onclick="selectTone(this, 'Conflicto')">
-            <div class="tone-title">🛡️ Manejo de Conflicto</div>
-            <div class="tone-desc">Asertivo, firme y calmado</div>
-        </div>
-        <div class="tone-card" onclick="selectTone(this, 'Desinteres')">
-            <div class="tone-title">😎 Desinterés Elegante</div>
-            <div class="tone-desc">Corto, independiente y fresco</div>
-        </div>
-    </div>
-
-    <button class="btn-generate" id="btnGenerate" onclick="analyzeChat()">✨ Generar Respuestas</button>
-
-    <div class="results-container" id="resultsContainer">
-        <div class="section-label">OPCIONES SUGERIDAS</div>
-        
-        <div class="reply-card">
-            <span class="reply-tag tag-1" id="tag1">Opción A</span>
-            <div class="reply-text" id="reply1">Cargando respuesta...</div>
-            <button class="btn-copy" onclick="copyText('reply1')">📋 Copiar respuesta</button>
-        </div>
-
-        <div class="reply-card">
-            <span class="reply-tag tag-2" id="tag2">Opción B</span>
-            <div class="reply-text" id="reply2">Cargando respuesta...</div>
-            <button class="btn-copy" onclick="copyText('reply2')">📋 Copiar respuesta</button>
-        </div>
-
-        <div class="reply-card">
-            <span class="reply-tag tag-3" id="tag3">Opción C</span>
-            <div class="reply-text" id="reply3">Cargando respuesta...</div>
-            <button class="btn-copy" onclick="copyText('reply3')">📋 Copiar respuesta</button>
-        </div>
-    </div>
-
     <script>
         let selectedTone = 'Ligar';
         let base64Image = null;
@@ -425,7 +75,8 @@
                 }
             `;
 
-            const models = ['gemini-1.5-flash', 'gemini-2.0-flash-exp'];
+            // Modelos estables y soportados oficialmente
+            const models = ['gemini-2.5-flash', 'gemini-1.5-flash'];
             let lastError = null;
             let success = false;
 
@@ -447,11 +98,11 @@
                     const data = await response.json();
 
                     if (data.error) {
-                        throw new Error(`[${modelName}] ${data.error.message}`);
+                        throw new Error(data.error.message);
                     }
 
                     if (!data.candidates || !data.candidates[0]?.content?.parts[0]?.text) {
-                        throw new Error(`[${modelName}] Respuesta vacía`);
+                        throw new Error(`Respuesta vacía del modelo ${modelName}`);
                     }
 
                     const rawText = data.candidates[0].content.parts[0].text;
@@ -467,12 +118,12 @@
                     break;
                 } catch (err) {
                     lastError = err;
-                    console.warn(`Falló intento con ${modelName}:`, err);
+                    console.warn(`Error probando modelo ${modelName}:`, err);
                 }
             }
 
             if (!success) {
-                alert('Error al procesar: ' + (lastError ? lastError.message : 'Revisa tu clave de Google AI Studio.'));
+                alert('Error al procesar: ' + (lastError ? lastError.message : 'Revisa tu clave de API.'));
             }
 
             btn.disabled = false;
@@ -486,5 +137,3 @@
             });
         }
     </script>
-</body>
-</html>
